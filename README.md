@@ -2,7 +2,7 @@
 - [ ] Time tracking by Activity
 - [ ] Clients
 - [ ] Projects
-- [ ] Authentication
+- [x] Authentication
 
 ### Data model so far
 ![Alt text](image.png)
