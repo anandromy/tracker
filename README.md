@@ -3,3 +3,6 @@
 - [ ] Clients
 - [ ] Projects
 - [ ] Authentication
+
+### Data model so far
+![Alt text](image.png)

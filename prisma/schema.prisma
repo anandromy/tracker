@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Tenant {
+  id          String    @id @default(dbgenerated("concat('tnt_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  name        String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  users       User[]
+  activities  Activity[]
+}
+
+
+model User {
+  id          String    @id @default(dbgenerated("concat('usr_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  email       String    @unique
+  name        String?
+  createdAt   DateTime  @default(now())
+  updateAt    DateTime  @default(now())
+  tenantId    String?
+  tenant      Tenant?   @relation(fields: [tenantId], references: [id])
+  activities  Activity[]
+}
+
+
+model Activity {
+  id          String  @id @default(dbgenerated("concat('act_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  name        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  startAt     DateTime
+  endAt       DateTime
+
+  tenantId    String?
+  userId      String?
+  user        User? @relation(fields: [userId], references: [id])
+  tenant      Tenant? @relation(fields: [tenantId], references: [id])
+}
