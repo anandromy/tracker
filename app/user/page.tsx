@@ -10,11 +10,6 @@ export default function User(){
     const [ userInput, setUserInput ] = useState("")
 
     const user = useAuth()
-    if(!user.isLoaded){
-        return(
-            <p>Loading...</p>
-        )
-    }
 
     const setUserInDb = async() => {
         const res = await fetch("http://localhost:3000/api/auth", {
@@ -29,6 +24,12 @@ export default function User(){
     useEffect(() => {
         setUserInDb()
     }, [userName])
+
+    if(!user.isLoaded){
+        return(
+            <p>Loading...</p>
+        )
+    }
     
     return(
         <div className="h-screen flex items-center justify-center">
