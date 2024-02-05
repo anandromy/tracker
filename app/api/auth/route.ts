@@ -21,7 +21,7 @@ export const POST = async (req: NextRequest) => {
        create: {
         id: clerkUserId,
         name: name
-       } 
+       }
     })
 
     return NextResponse.json({ response: res })
