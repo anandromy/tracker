@@ -4,7 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 const prisma = new PrismaClient()
 
 export const POST = async (req: NextRequest) => {
-    const { clerkUserId, name } = await req.json()
+    const body = await req.json()
+    const clerkUserId: string = body.clerkUserId
+    const name: string = body.name
     if(!clerkUserId){
         return NextResponse.json({ message: "No userId", statusbar: 401 })
     }
