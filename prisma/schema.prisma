@@ -14,21 +14,68 @@ datasource db {
 
 
 model User {
-  id          String    @id @default(dbgenerated("concat('usr_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  id          String    @id
   name        String?
-  activities  Activity[]
-  clerkUserId String
+
+  projects  Project[] 
+  independentTasks Task[]
+  workingBlocks WorkingBlock[] 
+  totalWorkingHours Int @default(0)
+}
+
+model Task {
+  id  String @id @default(dbgenerated("concat('task_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+
+  name String 
+  description String?
+  
+  createdAt DateTime
+  updatedAt DateTime
+
+  user User @relation(fields: [userId], references: [id])
+  userId String 
+
+  project Project? @relation(fields: [projectId], references: [id])
+  projectId String?
+
+  workingBlocks WorkingBlock[]
+
 }
 
 
-model Activity {
-  id          String  @id @default(dbgenerated("concat('act_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+model Project {
+  id          String  @id @default(dbgenerated("concat('project_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+
   name        String
+  description String?
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   startAt     DateTime
   endAt       DateTime
 
-  userId      String?
-  user        User? @relation(fields: [userId], references: [id])
+  user        User @relation(fields: [userId], references: [id])
+  userId      String
+  
+  tasks Task[]
+
+  workingBlocks WorkingBlock[]
+}
+
+model WorkingBlock {
+  id String @id
+  
+  startTime DateTime
+  endTime DateTime
+
+  user User @relation(fields: [userId], references: [id])
+  userId String
+
+  task Task? @relation(fields: [taskId], references: [id])
+  taskId String?
+
+  project Project? @relation(fields: [projectId], references: [id])
+  projectId String?
+
+  duration Int
 }
