@@ -17,3 +17,8 @@ I can't find how to update user, clerkClient.users is undefined, hence updateUse
 `npx prisma generate`
 `npx prisma db push` or `npx prims migrate dev --name updated_models`
 migrating command: npx prisma migrate dev --name added_username_column
+
+**GET Reuqest can't have body, it'll give an error**.
+## Clerk hooks
+1. `const { user, isLoaded, isSignedIn } = useUser()`. We can access values like `user.id` , `user.userName`, `user.firstName` etc, we can even update these `user.userName` like things. This hook is a client hook
+2. `auth()` This also provides things is `userId` , but if some page/component is declared `use client` at the top, this will not work and give an error as it is a `server only` hook.

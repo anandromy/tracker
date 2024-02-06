@@ -1,51 +1,58 @@
 "use client"
 
-import { useAuth } from "@clerk/nextjs"
+import { useAuth, useUser } from "@clerk/nextjs"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 export default function User(){
 
     const [ userName, setUserName ] = useState("")
-    const [ userInput, setUserInput ] = useState("")
 
-    const user = useAuth()
 
-    const setUserInDb = async() => {
+    const { user, isLoaded } = useUser()
+
+    const setUserInDb = async(userName: string) => {
         const res = await fetch("http://localhost:3000/api/auth", {
             method: "POST",
             body: JSON.stringify({
-                clerkUserId: user.userId,
+                clerkUserId: user?.id,
                 name: userName
             })
         })
+        await user?.update({
+            username: userName
+        })
     }
 
-    useEffect(() => {
-        setUserInDb()
-    }, [userName])
-
-    if(!user.isLoaded){
+    if(!isLoaded){
         return(
             <p>Loading...</p>
         )
     }
+
     
+    if(!user?.username){
+        return(
+            <div className="h-screen flex flex-grow">
+                <form className="text-center flex flex-col gap-2 mt-36 mx-auto">
+                    <label>What should we call you?</label>
+                    <input onChange={(e) => setUserName(e.target.value)} placeholder="John Doe" className="p-3 focus:outline-none rounded text-black"/>
+                    <button onClick={(e) => {
+                        e.preventDefault()
+                        if(userName.length === 0){
+                            return alert("Please provide a valid username")
+                        }
+                        setUserInDb(userName)
+                    }} className="bg-white text-black p-2 rounded mt-3">Submit</button>
+                    <Link href={"/user/projects"} className="text-white">Skip</Link>
+                </form>
+            </div>
+        )
+    }
+
     return(
-        <div className="h-screen flex items-center justify-center">
-            <form className="text-center flex flex-col gap-2">
-                <label>What should we call you?</label>
-                <input onChange={(e) => setUserInput(e.target.value)} placeholder="John Doe" className="p-3 focus:outline-none rounded text-black"/>
-                <button onClick={(e) => {
-                    e.preventDefault()
-                    if(userInput.length !== 0 ){
-                        setUserName(userInput)
-                    }else{
-                        alert("Please enter a valid name")
-                    }
-                }} className="bg-white text-black p-2 rounded mt-3">Submit</button>
-                <Link href={"/"} className="text-white">Skip</Link>
-            </form>
+        <div>
+            This user's name is set
         </div>
     )
 }
